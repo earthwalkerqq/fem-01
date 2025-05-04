@@ -1,9 +1,5 @@
 # fem-01
 
-clang draw_triangl.c -lglew -lglfw -framework OpenGL -framework GLUT
+The project is a calculation of the stress state of a plate loaded with a distributed force and secured with hinged-movable fixtures. You can see the drawing of the plate, nodes under load and secured nodes in the image folder. The project uses a library for parallelizing processes, visualization and others; you can see all of them in the dependencies.
 
-clang -I/opt/homebrew/Cellar/libomp/20.1.1/include -L/opt/homebrew/Cellar/libomp/20.1.1/lib -Xpreprocessor -fopenmp -lomp main.c fem.c formation_mtrx.c draw.c -framework OpenGL -framework GLUT
-
-export DYLD_LIBRARY_PATH="/opt/homebrew/Cellar/glew/2.2.01/lib:$DYLD_LIBRARY_PATH"
-
-clang -I/opt/homebrew/Cellar/libomp/20.1.1/include -L/opt/homebrew/Cellar/libomp/20.1.1/lib -Xpreprocessor -fopenmp -lomp main.c fem.c formation_mtrx.c -L/opt/homebrew/Cellar/glfw/3.4/lib -lglfw -framework OpenGL -framework GLUT -L/opt/homebrew/Cellar/glew/2.2.01/lib -lglew
+p.s. You may need to export the DYLD_LIBRARY_PATH path to run. You necessary to see MAKEFILE

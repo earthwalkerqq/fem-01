@@ -1,26 +1,33 @@
-# компилятор который будет использоваться
-CC=clang
+# Compiler
+CC = clang
 
-# флаги компиляции
-CFLAGS := ${CFLAGS} -I$(CURDIR)/dependencies/libomp/20.1.1/include -Xpreprocessor -fopenmp
+# Library paths
+LIBOMP_PATH = /opt/homebrew/Cellar/libomp/20.1.1
+GLFW_PATH = /opt/homebrew/Cellar/glfw/3.4
+GLEW_PATH = /opt/homebrew/Cellar/glew/2.2.01
 
-# флаги линковки
-LDFLAGS := ${LDFLAGS} -L$(CURDIR)/dependencies/libomp/20.1.1/lib -lomp -L$(CURDIR)/dependencies/glfw/3.4/lib -lglfw -framework OpenGL -framework GLUT -L$(CURDIR)/dependencies/glew/2.2.01/lib -lglew
+# Compilation flags
+CFLAGS = -I$(LIBOMP_PATH)/include -Xpreprocessor -fopenmp
 
-# Исходные файлы
+# Linker flags
+LDFLAGS = -L$(LIBOMP_PATH)/lib -lomp \
+          -L$(GLFW_PATH)/lib -lglfw \
+          -framework OpenGL \
+          -framework GLUT \
+          -L$(GLEW_PATH)/lib -lglew
+
+# Source files
 SRCS = main.c fem.c formation_mtrx.c
 
-# Исполняемый файл
 TARGET = a.out
 
-# путь к glew библиотеке
-DYLD_LIBRARY_PATH := $(CURDIR)/dependencies/glew/2.2.01/lib:
-# export DYLD_LIBRARY_PATH="$(DYLD_LIBRARY_PATH)";
+# Set DYLD_LIBRARY_PATH for GLEW
+export DYLD_LIBRARY_PATH := $(GLEW_PATH)/lib:$(DYLD_LIBRARY_PATH)
 
-all: compilation
-	
-compilation: $(SRCS)
-	$(CC) $(CFLAGS) $(LDFLAGS) $(SRCS) -o $(TARGET)
+.PHONY: all clean
+
+all:
+	$(CC) $(CFLAGS) $(SRCS) $(LDFLAGS) -o $(TARGET)
 
 clean:
 	rm -rf $(TARGET)
