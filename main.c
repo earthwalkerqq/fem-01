@@ -1,7 +1,7 @@
+#include <math.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 
 #define GL_SILENCE_DEPRECATION
 #include "dependencies/glew/2.2.01/include/GL/glew.h"
@@ -16,27 +16,27 @@
 #define KOEF_Y 14.
 #define WINDTH_WINDOW 1200
 #define HEIGHT_WINDOW 800
-#define STRESS_SCALE 1000.0  // Масштаб для визуализации напряжений
-#define DEFORMATION_SCALE 10.0  // Масштаб для визуализации деформаций
+#define STRESS_SCALE 1000.0    // Масштаб для визуализации напряжений
+#define DEFORMATION_SCALE 10.0 // Масштаб для визуализации деформаций
 
 // Глобальные переменные для управления визуализацией
-static int showDeformed = 1;  // Показывать деформированную модель
-static int showStress = 1;    // Показывать напряжения
-static int showValues = 0;    // Показывать числовые значения
-static double zoom = 1.0;     // Масштаб отображения
+static int showDeformed = 1; // Показывать деформированную модель
+static int showStress = 1;   // Показывать напряжения
+static int showValues = 0;   // Показывать числовые значения
+static double zoom = 1.0;    // Масштаб отображения
 
 void drawMashForSolve(int argc, char **argv);
 void drawModel(void);
 void display(void);
 void init(void);
 void keyboard(unsigned char key, int x, int y);
-void renderText(float x, float y, const char* text);
+void renderText(float x, float y, const char *text);
 
-static int nelem;    // кол-во треугольных элементов
-static int nys;      // число узлов К.Э модели
-static double **car = NULL; // массив координат узлов элемента
-static int **jt03 = NULL;   // массив номеров узлов элемента
-static double *u = NULL;    // массив перемещений узлов
+static int nelem;              // кол-во треугольных элементов
+static int nys;                // число узлов К.Э модели
+static double **car = NULL;    // массив координат узлов элемента
+static int **jt03 = NULL;      // массив номеров узлов элемента
+static double *u = NULL;       // массив перемещений узлов
 static double **stress = NULL; // массив напряжений
 
 int main(int argc, char **argv) {
@@ -44,7 +44,7 @@ int main(int argc, char **argv) {
   int ndofysla = 2; // кол-во степеней свободы одного узла
   double *dataCar;
   int *data_jt03;
-  short fileErr = readFromFile("nodes/node2.txt", &nys, &dataCar, &car, &nelem,
+  short fileErr = readFromFile("nodes/node1.txt", &nys, &dataCar, &car, &nelem,
                                &data_jt03, &jt03);
   if (fileErr == 1) {
     free_memory(4, dataCar, car, data_jt03, jt03);
@@ -129,7 +129,7 @@ int main(int argc, char **argv) {
   }
   stressModel(ndofysla, nys, nelem, jt03, car, h, e, puas, u, strain, stress);
   writeResult("result.txt", jt03, strain, stress, r, u, nelem, nys, ndof);
-  
+
   drawMashForSolve(argc, argv); // отрисовка модели, разбитой на КЭ
 
   // освобождение памяти из под матрицы
@@ -157,38 +157,35 @@ void drawMashForSolve(int argc, char **argv) {
 void drawModel(void) {
   for (int i = 0; i < nelem; i++) {
     // Вычисление среднего напряжения для элемента
+    int ielem = jt03[0][i];
     double avgStress = 0.0;
     for (int j = 0; j < 3; j++) {
-      avgStress += stress[j][i];
+      avgStress += stress[j][ielem - 1];
     }
     avgStress /= 3.0;
-    
     // Нормализация напряжения для цветовой схемы
     double normalizedStress = fabs(avgStress) / STRESS_SCALE;
-    if (normalizedStress > 1.0) normalizedStress = 1.0;
-    
+    normalizedStress = (normalizedStress > 1.0) ? 1.0 : normalizedStress;
     // Установка цвета в зависимости от режима отображения
     if (showStress) {
       glColor3f(normalizedStress, 0.0, 1.0 - normalizedStress);
     } else {
       glColor3f(0.0, 0.5, 0.0);
     }
-    
     // Отрисовка треугольника
     glBegin(GL_TRIANGLES);
     for (int j = 0; j < 3; j++) {
       double x = car[0][jt03[j][i] - 1];
       double y = car[1][jt03[j][i] - 1];
-      
       if (showDeformed) {
-        x += u[jt03[j][i] * 2 - 2] * DEFORMATION_SCALE;
-        y += u[jt03[j][i] * 2 - 1] * DEFORMATION_SCALE;
+        if (x != 0. && y != 0) { // опираясь на схему нагружения образца
+          x += u[jt03[j][i] * 2 - 2] * DEFORMATION_SCALE;
+          y += u[jt03[j][i] * 2 - 1] * DEFORMATION_SCALE;
+        }
       }
-      
       glVertex2f(KOEF_X + x * zoom / 2., KOEF_Y + y * zoom / 2.);
     }
     glEnd();
-    
     // Отрисовка границ элементов
     glColor3f(0.7, 0.7, 0.7);
     int index = 0;
@@ -198,21 +195,21 @@ void drawModel(void) {
       double y1 = car[1][jt03[index][i] - 1];
       double x2 = car[0][jt03[(index + 1) % 3][i] - 1];
       double y2 = car[1][jt03[(index + 1) % 3][i] - 1];
-      
       if (showDeformed) {
-        x1 += u[jt03[index][i] * 2 - 2] * DEFORMATION_SCALE;
-        y1 += u[jt03[index][i] * 2 - 1] * DEFORMATION_SCALE;
-        x2 += u[jt03[(index + 1) % 3][i] * 2 - 2] * DEFORMATION_SCALE;
-        y2 += u[jt03[(index + 1) % 3][i] * 2 - 1] * DEFORMATION_SCALE;
+        if (x1 != 0. && y1 != 0) {
+          x1 += u[jt03[index][i] * 2 - 2] * DEFORMATION_SCALE;
+          y1 += u[jt03[index][i] * 2 - 1] * DEFORMATION_SCALE;
+        }
+        if (x2 != 0. && y2 != 0) {
+          x2 += u[jt03[(index + 1) % 3][i] * 2 - 2] * DEFORMATION_SCALE;
+          y2 += u[jt03[(index + 1) % 3][i] * 2 - 1] * DEFORMATION_SCALE;
+        }
       }
-      
       glVertex2f(KOEF_X + x1 * zoom / 2., KOEF_Y + y1 * zoom / 2.);
       glVertex2f(KOEF_X + x2 * zoom / 2., KOEF_Y + y2 * zoom / 2.);
       glEnd();
-      
       index = (index + 1) % 3;
     }
-    
     // Отображение числовых значений напряжений
     if (showValues) {
       char text[32];
@@ -224,7 +221,6 @@ void drawModel(void) {
       }
       centerX = KOEF_X + (centerX / 3.0) * zoom / 2.;
       centerY = KOEF_Y + (centerY / 3.0) * zoom / 2.;
-      
       glColor3f(0.0, 0.0, 0.0);
       renderText(centerX, centerY, text);
     }
@@ -258,29 +254,29 @@ void init(void) {
 
 void keyboard(unsigned char key, int x, int y) {
   switch (key) {
-    case 'd': // Переключение деформированной/недеформированной модели
-      showDeformed = !showDeformed;
-      break;
-    case 's': // Переключение отображения напряжений
-      showStress = !showStress;
-      break;
-    case 'v': // Переключение отображения числовых значений
-      showValues = !showValues;
-      break;
-    case '=': // Увеличение масштаба (чтобы не зажимать shift)
-      zoom *= 1.1;
-      break;
-    case '-': // Уменьшение масштаба
-      zoom /= 1.1;
-      break;
+  case 'd': // Переключение деформированной/недеформированной модели
+    showDeformed = !showDeformed;
+    break;
+  case 's': // Переключение отображения напряжений
+    showStress = !showStress;
+    break;
+  case 'v': // Переключение отображения числовых значений
+    showValues = !showValues;
+    break;
+  case '=': // Увеличение масштаба (чтобы не зажимать shift)
+    zoom *= 1.1;
+    break;
+  case '-': // Уменьшение масштаба
+    zoom /= 1.1;
+    break;
   }
   glutPostRedisplay();
 }
 
 // Функция для отображения текста
-void renderText(float x, float y, const char* text) {
+void renderText(float x, float y, const char *text) {
   glRasterPos2f(x, y);
-  for (const char* c = text; *c != '\0'; c++) {
+  for (const char *c = text; *c != '\0'; c++) {
     glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, *c);
   }
 }
