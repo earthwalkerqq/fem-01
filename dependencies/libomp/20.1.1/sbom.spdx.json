@@ -1,0 +1,95 @@
+{
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "spdxVersion": "SPDX-2.3",
+  "name": "SBOM-SPDX-libomp-20.1.1",
+  "creationInfo": {
+    "created": "2025-03-21T07:45:45Z",
+    "creators": [
+      "Tool: https://github.com/Homebrew/brew@4.4.21"
+    ]
+  },
+  "dataLicense": "CC0-1.0",
+  "documentNamespace": "https://formulae.brew.sh/spdx/libomp-20.1.1.json",
+  "documentDescribes": [
+    "SPDXRef-Archive-libomp-src",
+    "SPDXRef-Compiler",
+    "SPDXRef-Bottle-libomp"
+  ],
+  "files": [
+
+  ],
+  "packages": [
+    {
+      "SPDXID": "SPDXRef-Archive-libomp-src",
+      "name": "libomp",
+      "versionInfo": "20.1.1",
+      "filesAnalyzed": false,
+      "licenseDeclared": "NOASSERTION",
+      "builtDate": "2025-03-18 23:15:15 UTC",
+      "licenseConcluded": "MIT",
+      "downloadLocation": "https://github.com/llvm/llvm-project/releases/download/llvmorg-20.1.1/openmp-20.1.1.src.tar.xz",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+
+      ],
+      "checksums": [
+        {
+          "algorithm": "SHA256",
+          "checksumValue": "a5d2bba7bc4e7d159ce3fe8d09bdadeb59ff00af967b0a2bf5993fc1528f569e"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Compiler",
+      "name": "clang",
+      "versionInfo": "16.0",
+      "filesAnalyzed": false,
+      "licenseDeclared": "NOASSERTION",
+      "licenseConcluded": "NOASSERTION",
+      "copyrightText": "NOASSERTION",
+      "downloadLocation": "NOASSERTION",
+      "checksums": [
+
+      ],
+      "externalRefs": [
+
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-Bottle-libomp",
+      "name": "libomp",
+      "versionInfo": "20.1.1",
+      "filesAnalyzed": false,
+      "licenseDeclared": "NOASSERTION",
+      "builtDate": "2025-03-18 23:15:15 UTC",
+      "licenseConcluded": "MIT",
+      "downloadLocation": "https://ghcr.io/v2/homebrew/core/libomp/blobs/sha256:8168a1da1ba2fdfca159fc501e40bdccf2dd6645a491fe7f6094d93308720b51",
+      "copyrightText": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:brew/homebrew/core/libomp@20.1.1",
+          "referenceType": "purl"
+        }
+      ],
+      "checksums": [
+        {
+          "algorithm": "SHA256",
+          "checksumValue": "8168a1da1ba2fdfca159fc501e40bdccf2dd6645a491fe7f6094d93308720b51"
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "spdxElementId": "SPDXRef-File-libomp",
+      "relationshipType": "PACKAGE_OF",
+      "relatedSpdxElement": "SPDXRef-Archive-libomp-src"
+    },
+    {
+      "spdxElementId": "SPDXRef-Compiler",
+      "relationshipType": "BUILD_TOOL_OF",
+      "relatedSpdxElement": "SPDXRef-Package-libomp-src"
+    }
+  ]
+}
