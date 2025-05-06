@@ -10,7 +10,8 @@
     "vector": "c",
     "stdarg.h": "c",
     "glut.h": "c",
-    "glew.h": "c"
+    "glew.h": "c",
+    "formation_mtrx.h": "c"
   },
   "C_Cpp_Runner.msvcBatchPath": "",
   "C_Cpp_Runner.cCompilerPath": "clang",
@@ -50,7 +51,9 @@
   "C_Cpp_Runner.warningsAsError": false,
   "C_Cpp_Runner.compilerArgs": [],
   "C_Cpp_Runner.linkerArgs": [],
-  "C_Cpp_Runner.includePaths": [],
+  "C_Cpp_Runner.includePaths": [
+    "/opt/homebrew/Cellar/**",
+  ],
   "C_Cpp_Runner.includeSearch": [
     "*",
     "**/*"

@@ -44,7 +44,7 @@ int main(int argc, char **argv) {
   int ndofysla = 2; // кол-во степеней свободы одного узла
   double *dataCar;
   int *data_jt03;
-  short fileErr = readFromFile("nodes/node1.txt", &nys, &dataCar, &car, &nelem,
+  short fileErr = readFromFile("../nodes/node1.txt", &nys, &dataCar, &car, &nelem,
                                &data_jt03, &jt03);
   if (fileErr == 1) {
     free_memory(4, dataCar, car, data_jt03, jt03);
