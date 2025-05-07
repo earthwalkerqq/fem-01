@@ -79,22 +79,15 @@ void stressPlanElem(coord coord1, coord coord2, coord coord3, double h,
 void planeElement(coord coord1, coord coord2, coord coord3, double e, double h,
                   double puas, double **gest) {
   double sum;
-  // формирование матрица деформаций b[3][6]
+  // формирование матрица деформаций deformMtrx[3][6]
   double *dataDefMtrx = (double *)malloc(3 * 6 * sizeof(double));
-  double **defotmMtrx = (double **)malloc(3 * sizeof(double *));
-  for (int i = 0; i < 3; i++) {
-    *(defotmMtrx + i) = dataDefMtrx + i * 6;
-  }
+  double **defotmMtrx = makeDoubleMtrx(&dataDefMtrx, 3, 6);
   // заполнение матрицы деформаций
   double a2 = coord2.x * coord3.y - coord3.x * coord2.y + coord3.x * coord1.y -
               coord1.x * coord3.y + coord1.x * coord2.y - coord2.x * coord1.y;
-  // формирование матрицы напряжений strsMatr[3][6] =
-  // elastMtrx[3][3]*defotmMtrx[3][6]
+  // формирование матрицы напряжений strsMatr[3][6]
   double *dataStrsMatr = (double *)malloc(3 * 6 * sizeof(double));
-  double **strsMatr = (double **)malloc(3 * sizeof(double *));
-  for (int i = 0; i < 3; i++) {
-    *(strsMatr + i) = dataStrsMatr + i * 6;
-  }
+  double **strsMatr = makeDoubleMtrx(&dataStrsMatr, 3, 6);
   // заполнение матрицы напряжений
   stressPlanElem(coord1, coord2, coord3, h, e, puas, defotmMtrx, strsMatr);
   double vol = h * a2 * 0.5;

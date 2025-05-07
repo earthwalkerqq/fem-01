@@ -6,9 +6,7 @@ START_TEST(test_formatationDefomrmMtrx) {
     for (int i = 0; i < 3; i++) {
         deformMxtr[i] = dataDeformMtrx + i * 6;
     }
-    coord coord1 = {0., 0.};
-    coord coord2 = {20., 0.};
-    coord coord3 = {20., 20.};
+    
     double a2 = coord2.x * coord3.y - coord2.y * coord3.x +
                 coord3.x * coord1.y - coord3.y * coord1.x +
                 coord1.x * coord2.y - coord1.y * coord2.x;
@@ -26,14 +24,13 @@ START_TEST(test_formatationDefomrmMtrx) {
     free_memory(2, dataDeformMtrx, deformMxtr);
 } END_TEST
 
-START_TEST(test_formatationElastMtrx) {
-    double *dataElastMtrx = (double *)malloc(3 * 3 * sizeof(double));
-    double **elastMtrx = (double **)malloc(3 * sizeof(double *));
-    for (int i = 0; i < 3; i++) {
-        elastMtrx[i] = dataElastMtrx + i * 3;
-    }
-    double e = 2.1e5;
-    double puas = 0.3;
-    elastMtrx = formationElastMtrx(elastMtrx, e, puas);
-    // дописать тест!!
+Suite *test_formatationDeformMtrx(void) {
+    Suite *s = suite_create("formatationDeformMtrx");
+    TCase *tc = tcase_create(" test_deformMtrx ");
+
+    suite_add_tcase(s, tc);
+    tcase_add_test(tc, test_formatationDefomrmMtrx);
+
+    suite_add_tcase(s, tc);
+    return s;
 }

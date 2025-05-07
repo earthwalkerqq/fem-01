@@ -11,7 +11,10 @@
     "stdarg.h": "c",
     "glut.h": "c",
     "glew.h": "c",
-    "formation_mtrx.h": "c"
+    "formation_mtrx.h": "c",
+    "check.h": "c",
+    "atomic": "c",
+    "bitset": "c"
   },
   "C_Cpp_Runner.msvcBatchPath": "",
   "C_Cpp_Runner.cCompilerPath": "clang",
