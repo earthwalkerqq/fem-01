@@ -9,7 +9,7 @@ GLFW_PATH := /usr/lib/libglfw
 GLEW_PATH := /usr/lib/libglew
 
 CFLAGS=-Wall -Werror -Wextra -std=c99 \
-	-I$(LIBOMP_PATH)/include -Xpreprocessor
+	-I$(LIBOMP_PATH)/include
 
 ifeq ($(OS), Darwin)
 	OPENMP_FLAG=-Xpreprocessor -fopenmp
@@ -28,9 +28,9 @@ LDFLAGS = -L$(LIBOMP_PATH)/lib -lomp \
 	-L$(GLEW_PATH)/lib -lglew \
 	$(OPENMP_FLAG)
 
-OBJ=$(patsubst %.c, %.o, $(FILES))
-
 FILES=$(wildcard *.c)
+OBJ=$(FILES:.c=.o)
+
 TEST_FILES=$(wildcard tests/test_*.c)
 
 MY_LIB=fem-01.a
@@ -78,7 +78,7 @@ $(MY_LIB): $(FILES)
 	$(CC) -c $(CFLAGS) $(FILES)
 	ar rc $@ $(OBJ)
 	ranlib $@
-	rm -rf *.0
+	rm -rf *.o
 
 test: $(MY_LIB)
 ifeq ($(OS), Darwin)
