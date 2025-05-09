@@ -2,14 +2,18 @@
 
 START_TEST(test_formatationStressMtrx) {
     double *dataStrsMxtr = (double *)malloc(3 * 6 * sizeof(double));
-    double **strsMxtr = makeDoubleMtrx(&dataStrsMxtr, 3, 6);
+    double **strsMxtr = NULL;
+    makeDoubleMtrx(&dataStrsMxtr, &strsMxtr, 3, 6);
     double *dataDeformMtrx = (double *)malloc(3 * 6 * sizeof(double));
-    double **deformMtrx = makeDoubleMtrx(&dataDeformMtrx, 3, 6);
+    double **deformMtrx = NULL;
+    makeDoubleMtrx(&dataDeformMtrx, &deformMtrx, 3, 6);
     double *dataElastMtrx = (double *)malloc(3 * 3 * sizeof(double));
-    double **elastMtrx = makeDoubleMtrx(&dataElastMtrx, 3, 3);
+    double **elastMtrx = NULL;
+    makeDoubleMtrx(&dataElastMtrx, &elastMtrx, 3, 3);
     stressPlanElem(coord1, coord2, coord3, h, e, puas, deformMtrx, strsMxtr);
     double *dataResMtrx = (double *)malloc(3 * 6 * sizeof(double));
-    double **resMtrx = makeDoubleMtrx(&dataResMtrx, 3, 6);
+    double **resMtrx = NULL;
+    makeDoubleMtrx(&dataResMtrx, &resMtrx, 3, 6);
     double sum;
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 6; j++) {

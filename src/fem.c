@@ -152,8 +152,8 @@ bool solveLinearSystemLDLT(double **kglb, double *u, double *r, double *x,
 }
 
 // расчет напряжений и деформаций в элементах модели
-void stressModel(int ndofysla, int nys, int nelem, int **jt03, double **car,
-                 double h, double e, double puas, double *u, double **strain,
+void stressModel(int ndofysla, int nelem, int **jt03, double **car,
+                 double e, double puas, double *u, double **strain,
                  double **stress) {
   // формирование матрицы деформаций deformMtrx[3][6]
   double *dataDeformMtrx = (double *)malloc(3 * 6 * sizeof(double));
@@ -181,7 +181,7 @@ void stressModel(int ndofysla, int nys, int nelem, int **jt03, double **car,
       coord coord1 = {car[0][node.iys1], car[1][node.iys1]};
       coord coord2 = {car[0][node.iys2], car[1][node.iys2]};
       coord coord3 = {car[0][node.iys3], car[1][node.iys3]};
-      stressPlanElem(coord1, coord2, coord3, h, e, puas, deformMtrx, strsMtrx);
+      stressPlanElem(coord1, coord2, coord3, e, puas, deformMtrx, strsMtrx);
       uElement[0] = u[node.iys1 * ndofysla];
       uElement[1] = u[node.iys1 * ndofysla + 1];
       uElement[2] = u[node.iys2 * ndofysla];

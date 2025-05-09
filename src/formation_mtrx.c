@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "fem.h"
+#include "formation_mtrx.h"
 
 // расчет матрицы деформаций
 double **formationDeformMtrx(double **deformMtrx, coord coord1, coord coord2,
@@ -45,15 +46,13 @@ double **formationElastMtrx(double **elastMtrx, double e, double puas) {
 }
 
 // расчет матрицы напряжений
-void stressPlanElem(coord coord1, coord coord2, coord coord3, double h,
+void stressPlanElem(coord coord1, coord coord2, coord coord3,
                     double e, double puas, double **deformMtrx,
                     double **strsMatr) {
   // формирование матрицы упругости elastMtrx[3][3]
   double *dataElastMtrx = (double *)malloc(3 * 3 * sizeof(double));
-  double **elastMtrx = (double **)malloc(3 * sizeof(double *));
-  for (int i = 0; i < 3; i++) {
-    elastMtrx[i] = dataElastMtrx + i * 3;
-  }
+  double **elastMtrx = NULL;
+  makeDoubleMtrx(&dataElastMtrx, &elastMtrx, 3, 3);
   // заполнение матрицы упругости
   elastMtrx = formationElastMtrx(elastMtrx, e, puas);
   // заполнение матрицы деформаций deformMtrx[3][6]
@@ -81,15 +80,17 @@ void planeElement(coord coord1, coord coord2, coord coord3, double e, double h,
   double sum;
   // формирование матрица деформаций deformMtrx[3][6]
   double *dataDefMtrx = (double *)malloc(3 * 6 * sizeof(double));
-  double **defotmMtrx = makeDoubleMtrx(&dataDefMtrx, 3, 6);
+  double **defotmMtrx = NULL;
+  makeDoubleMtrx(&dataDefMtrx, &defotmMtrx, 3, 6);
   // заполнение матрицы деформаций
   double a2 = coord2.x * coord3.y - coord3.x * coord2.y + coord3.x * coord1.y -
               coord1.x * coord3.y + coord1.x * coord2.y - coord2.x * coord1.y;
   // формирование матрицы напряжений strsMatr[3][6]
   double *dataStrsMatr = (double *)malloc(3 * 6 * sizeof(double));
-  double **strsMatr = makeDoubleMtrx(&dataStrsMatr, 3, 6);
+  double **strsMatr = NULL;
+  makeDoubleMtrx(&dataStrsMatr, &strsMatr, 3, 6);
   // заполнение матрицы напряжений
-  stressPlanElem(coord1, coord2, coord3, h, e, puas, defotmMtrx, strsMatr);
+  stressPlanElem(coord1, coord2, coord3, e, puas, defotmMtrx, strsMatr);
   double vol = h * a2 * 0.5;
   // вычисление матрицы жесткости
   // gest[6][6]=strsMatr(trans)[6][3]*deformMtrx[3][6]*vol
@@ -187,40 +188,38 @@ void SetLoadVector(double *r, int lenNodePres, int *nodePres, int ndofysla,
   }
 }
 
-double **makeDoubleMtrx(double **dataMtrx, int row, int col) {
+void makeDoubleMtrx(double **dataMtrx, double ***mtrx, int row, int col) {
   *dataMtrx = (double *)malloc(row * col * sizeof(double));
   if (*dataMtrx == NULL) {
     printf("Can't allocate memory for dataMtrx\n");
-    return NULL;
+    exit(1);
   }
-  double **mtrx = (double **)malloc(row * sizeof(double *));
-  if (mtrx == NULL) {
+  *mtrx = (double **)malloc(row * sizeof(double *));
+  if (*mtrx == NULL) {
     printf("Can't allocate memory for row pointers\n");
     free(*dataMtrx);
-    return NULL;
+    exit(1);
   }
   for (int i = 0; i < row; i++) {
-    mtrx[i] = *dataMtrx + i * col;
+    (*mtrx)[i] = *dataMtrx + i * col;
   }
-  return mtrx;
 }
 
-int **makeIntegerMtrx(int **dataMtrx, int row, int col) {
+void makeIntegerMtrx(int **dataMtrx, int ***mtrx, int row, int col) {
   *dataMtrx = (int *)malloc(row * col * sizeof(int));
   if (*dataMtrx == NULL) {
     printf("Can't allocate memory for dataMtrx\n");
-    return NULL;
+    exit(1);
   }
-  int **mtrx = (int **)malloc(row * sizeof(int *));
-  if (mtrx == NULL) {
+  *mtrx = (int **)malloc(row * sizeof(int *));
+  if (*mtrx == NULL) {
     printf("Can't allocate memory for row pointers\n");
     free(*dataMtrx);
-    return NULL;
+    exit(1);
   }
   for (int i = 0; i < row; i++) {
-    mtrx[i] = *dataMtrx + i * col;
+    (*mtrx)[i] = *dataMtrx + i * col;
   }
-  return mtrx;
 }
 
 short readFromFile(char *filename, int *nys, double **dataCar, double ***car,
@@ -231,7 +230,7 @@ short readFromFile(char *filename, int *nys, double **dataCar, double ***car,
     err = 1;
   } else {
     fscanf(file, "%d", nys);
-    *car = makeDoubleMtrx(dataCar, 3, *nys); // массив координат узлов элемента
+    makeDoubleMtrx(dataCar, car, 3, *nys); // массив координат узлов элемента
   }
   if (*car == NULL) {
     err = 2;
@@ -240,8 +239,7 @@ short readFromFile(char *filename, int *nys, double **dataCar, double ***car,
     fscanf(file, "%lf%lf%lf", &(*car)[0][i], &(*car)[1][i], &(*car)[2][i]);
   }
   fscanf(file, "%d", nelem);
-  *jt03 =
-      makeIntegerMtrx(data_jt03, 3, *nelem); // массив номеров узлов элемента
+  makeIntegerMtrx(data_jt03, jt03, 3, *nelem); // массив номеров узлов элемента
   if (*jt03 == NULL) {
     err = 3;
   }

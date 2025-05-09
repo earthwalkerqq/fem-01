@@ -4,9 +4,9 @@
 #include <stdlib.h>
 
 #define GL_SILENCE_DEPRECATION
-#include "dependencies/glew/2.2.01/include/GL/glew.h"
-#include "dependencies/glfw/3.4/include/GLFW/glfw3.h"
-#include "dependencies/glut/include/glut.h"
+#include "../dependencies/glew/2.2.01/include/GL/glew.h"
+#include "../dependencies/glfw/3.4/include/GLFW/glfw3.h"
+#include "../dependencies/glut/include/glut.h"
 #include "fem.h"
 #include "formation_mtrx.h"
 
@@ -29,7 +29,7 @@ void drawMashForSolve(int argc, char **argv);
 void drawModel(void);
 void display(void);
 void init(void);
-void keyboard(unsigned char key, int x, int y);
+void keyboard(unsigned char key, int __attribute__((unused)) x, int __attribute__((unused)) y);
 void renderText(float x, float y, const char *text);
 
 static int nelem;              // кол-во треугольных элементов
@@ -40,7 +40,6 @@ static double *u = NULL;       // массив перемещений узлов
 static double **stress = NULL; // массив напряжений
 
 int main(int argc, char **argv) {
-  FILE *file;
   int ndofysla = 2; // кол-во степеней свободы одного узла
   double *dataCar;
   int *data_jt03;
@@ -63,14 +62,16 @@ int main(int argc, char **argv) {
   double puas = 0.3;
   double *dataGEST;
   // локальная матрица жесткости gest[6][6]
-  double **gest = makeDoubleMtrx(&dataGEST, 6, 6);
+  double **gest = NULL;
+  makeDoubleMtrx(&dataGEST, &gest, 6, 6);
   if (gest == NULL) {
     free_memory(5, gest, dataCar, car, data_jt03, jt03);
     exit(1);
   }
   double *dataKGLB;
   // глобальная матрица жесткости kglb
-  double **kglb = makeDoubleMtrx(&dataKGLB, ndof, ndof);
+  double **kglb = NULL;
+  makeDoubleMtrx(&dataKGLB, &kglb, ndof, ndof);
   if (kglb == NULL) {
     free_memory(7, kglb, dataGEST, gest, dataCar, car, data_jt03, jt03);
     exit(1);
@@ -112,22 +113,23 @@ int main(int argc, char **argv) {
     exit(1);
   }
   // расчет деформаций, напряжений
-  double *dataStrain; // массив деформаций
-  double **strain = makeDoubleMtrx(&dataStrain, 4, nelem);
+  double *dataStrain = NULL; // массив деформаций
+  double **strain = NULL;
+  makeDoubleMtrx(&dataStrain, &strain, 4, nelem);
   if (strain == NULL) {
     free_memory(15, strain, nodePres, nodeZakrU, nodeZakrV, u, r, x, dataKGLB,
                 kglb, dataGEST, gest, dataCar, car, data_jt03, jt03);
     exit(1);
   }
-  double *dataStress; // массив напряжений
-  stress = makeDoubleMtrx(&dataStress, 4, nelem);
+  double *dataStress = NULL; // массив напряжений
+  makeDoubleMtrx(&dataStress, &stress, 4, nelem);
   if (stress == NULL) {
     free_memory(17, stress, dataStrain, strain, nodePres, nodeZakrU, nodeZakrV,
                 u, r, x, dataKGLB, kglb, dataGEST, gest, dataCar, car,
                 data_jt03, jt03);
     exit(1);
   }
-  stressModel(ndofysla, nys, nelem, jt03, car, h, e, puas, u, strain, stress);
+  stressModel(ndofysla, nelem, jt03, car, e, puas, u, strain, stress);
   writeResult("result.txt", jt03, strain, stress, r, u, nelem, nys, ndof);
 
   drawMashForSolve(argc, argv); // отрисовка модели, разбитой на КЭ
@@ -252,7 +254,7 @@ void init(void) {
   glLoadIdentity();
 }
 
-void keyboard(unsigned char key, int x, int y) {
+void keyboard(unsigned char key, int __attribute__((unused)) x, int __attribute__((unused)) y) {
   switch (key) {
   case 'd': // Переключение деформированной/недеформированной модели
     showDeformed = !showDeformed;

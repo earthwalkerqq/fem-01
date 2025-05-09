@@ -7,7 +7,7 @@ int main(void) {
         test_formatationElastMtrx(),
         test_formatationStressMtrx(),
         test_formatationGestMtrx(),
-        test_formatationGlobalMtrx();
+        test_formatationGlobalMtrx()
     };
     for (int i = 0; fem_test[i] != NULL; i++) {
         SRunner *sr = srunner_create(fem_test[i]);

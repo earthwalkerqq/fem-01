@@ -4,8 +4,8 @@
 #include <check.h>
 #include <stdlib.h>
 
-#include "formation_mtrx.h"
-#include "fem.h"
+#include "../formation_mtrx.h"
+#include "../fem.h"
 
 coord coord1 = {0., 0.};
 coord coord2 = {20., 0.};

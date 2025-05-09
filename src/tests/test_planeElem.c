@@ -2,12 +2,15 @@
 
 START_END(test_formatationPlaneElem) {
     double *dataGEST = (double *)malloc(6 * 6 * sizeof(double));
-    double **gest = makeDoubleMtrx(&dataGEST, 6, 6);
+    double **gest = NULL;
+    makeDoubleMtrx(&dataGEST, &gest, 6, 6);
     planeElement(coord1, coord2, coord3, e, h, puas, gest);
     double *dataDeformMtrx = (double *)malloc(3 * 6 * sizeof(double));
-    double **deformMtrx = makeDoubleMtrx(&dataDeformMtrx, 3, 6);
+    double **deformMtrx = NULL;
+    makeDoubleMtrx(&dataDeformMtrx, &deformMtrx, 3, 6);
     double *dataStrsMtrx = (double *)malloc(3 * 6 * sizeof(double));
-    double **strsMtrx = makeDoubleMtrx(&dataStrsMtrx, 3, 6);
+    double **strsMtrx = NULL;
+    makeDoubleMtrx(&dataStrsMtrx, &strsMtrx, 3, 6);
     stressPlanElem(coord1, coord2, coord3, h, e, puas, deformMtrx, strsMtrx);
     double a2 = coord2.x * coord3.y - coord3.x * coord2.y + coord3.x * coord1.y -
                 coord1.x * coord3.y + coord1.x * coord2.y - coord2.x * coord1.y;
