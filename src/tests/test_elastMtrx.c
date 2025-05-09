@@ -1,6 +1,6 @@
 #include "test_fem.h"
 
-START_TEST(test_formatationElastMtrx) {
+START_TEST(test_elastMtrx_formation) {
     double *dataElastMtrx = (double *)malloc(3 * 3 * sizeof(double));
     double **elastMtrx = (double **)malloc(3 * sizeof(double *));
     for (int i = 0; i < 3; i++) {
@@ -26,7 +26,7 @@ Suite *test_formatationElastMtrx(void) {
     TCase *tc = tcase_create(" test_elastMtrx ");
 
     suite_add_tcase(s, tc);
-    tcase_add_test(tc, test_formatationElastMtrx);
+    tcase_add_test(tc, test_elastMtrx_formation);
 
     suite_add_tcase(s, tc);
     return s;

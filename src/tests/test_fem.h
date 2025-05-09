@@ -29,7 +29,7 @@ int ndof = 8;
 
 Suite *test_formatationDeformMtrx(void);
 Suite *test_formatationElastMtrx(void);
-Suite *test_formatationGestMtrx(void);
+Suite *test_formatationPlaneElem(void);
 Suite *test_formatationStressMtrx(void);
 Suite *test_formatationGlobalMtrx(void);
 

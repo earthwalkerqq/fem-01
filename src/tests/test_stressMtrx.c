@@ -1,6 +1,6 @@
 #include "test_fem.h"
 
-START_TEST(test_formatationStressMtrx) {
+START_TEST(test_stressMtrx_formatation) {
     double *dataStrsMxtr = (double *)malloc(3 * 6 * sizeof(double));
     double **strsMxtr = NULL;
     makeDoubleMtrx(&dataStrsMxtr, &strsMxtr, 3, 6);
@@ -10,7 +10,7 @@ START_TEST(test_formatationStressMtrx) {
     double *dataElastMtrx = (double *)malloc(3 * 3 * sizeof(double));
     double **elastMtrx = NULL;
     makeDoubleMtrx(&dataElastMtrx, &elastMtrx, 3, 3);
-    stressPlanElem(coord1, coord2, coord3, h, e, puas, deformMtrx, strsMxtr);
+    stressPlanElem(coord1, coord2, coord3, e, puas, deformMtrx, strsMxtr);
     double *dataResMtrx = (double *)malloc(3 * 6 * sizeof(double));
     double **resMtrx = NULL;
     makeDoubleMtrx(&dataResMtrx, &resMtrx, 3, 6);
@@ -38,7 +38,7 @@ Suite *test_formatationStressMtrx(void) {
     TCase *tc = tcase_create(" test_stressMtrx ");
 
     suite_add_tcase(s, tc);
-    tcase_add_test(tc, test_formatationStressMtrx);
+    tcase_add_test(tc, test_stressMtrx_formatation);
 
     suite_add_tcase(s, tc);
     return s;

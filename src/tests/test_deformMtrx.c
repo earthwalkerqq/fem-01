@@ -1,6 +1,6 @@
 #include "test_fem.h"
 
-START_TEST(test_formatationDefomrmMtrx) {
+START_TEST(test_deformMtrx_formatation) {
     double *dataDeformMtrx = (double *)malloc(3 * 6 * sizeof(double));
     double **deformMxtr = (double **)malloc(3 * sizeof(double *));
     for (int i = 0; i < 3; i++) {
@@ -29,7 +29,7 @@ Suite *test_formatationDeformMtrx(void) {
     TCase *tc = tcase_create(" test_deformMtrx ");
 
     suite_add_tcase(s, tc);
-    tcase_add_test(tc, test_formatationDefomrmMtrx);
+    tcase_add_test(tc, test_deformMtrx_formatation);
 
     suite_add_tcase(s, tc);
     return s;

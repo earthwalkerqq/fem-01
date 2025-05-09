@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "test_fem.h"
 
 int main(void) {
@@ -6,7 +8,7 @@ int main(void) {
         test_formatationDeformMtrx(),
         test_formatationElastMtrx(),
         test_formatationStressMtrx(),
-        test_formatationGestMtrx(),
+        test_formatationPlaneElem(),
         test_formatationGlobalMtrx()
     };
     for (int i = 0; fem_test[i] != NULL; i++) {

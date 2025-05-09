@@ -6,7 +6,7 @@ START_TEST(test_formatationGlobalMtrx_1) {
     makeDoubleMtrx(&dataGEST, &gest, 6, 6);
     double *dataKGLB = (double *)malloc(ndof * ndof * sizeof(double));
     double **kglb = NULL;
-    makeDoubleMtrx(dataKGLB, &kglb, ndof, ndof);
+    makeDoubleMtrx(&dataKGLB, &kglb, ndof, ndof);
     for (int ielem = 0; ielem < nelem; ielem++) {
         nodeNumber node = {
             jt03[0][ielem],

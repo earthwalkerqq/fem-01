@@ -1,6 +1,6 @@
 #include "test_fem.h"
 
-START_END(test_formatationPlaneElem) {
+START_TEST(test_planeElem_formatation) {
     double *dataGEST = (double *)malloc(6 * 6 * sizeof(double));
     double **gest = NULL;
     makeDoubleMtrx(&dataGEST, &gest, 6, 6);
@@ -11,10 +11,10 @@ START_END(test_formatationPlaneElem) {
     double *dataStrsMtrx = (double *)malloc(3 * 6 * sizeof(double));
     double **strsMtrx = NULL;
     makeDoubleMtrx(&dataStrsMtrx, &strsMtrx, 3, 6);
-    stressPlanElem(coord1, coord2, coord3, h, e, puas, deformMtrx, strsMtrx);
-    double a2 = coord2.x * coord3.y - coord3.x * coord2.y + coord3.x * coord1.y -
-                coord1.x * coord3.y + coord1.x * coord2.y - coord2.x * coord1.y;
-    double vol = h * a2 * 0.5;
+    stressPlanElem(coord1, coord2, coord3, e, puas, deformMtrx, strsMtrx);
+    // double a2 = coord2.x * coord3.y - coord3.x * coord2.y + coord3.x * coord1.y -
+    //             coord1.x * coord3.y + coord1.x * coord2.y - coord2.x * coord1.y;
+    // double vol = h * a2 * 0.5;
     double resMtrx[6][6] = {
         {1.154e5, 0., -1.154e5, 3.462e4, 0., -3.462e4},
         {0., 4.038e4, 4.038e4, -4.038e44, -4.038e4, 0.},
@@ -44,12 +44,12 @@ START_END(test_formatationPlaneElem) {
                 deformMtrx, gest, strsMtrx);
 } END_TEST
 
-Suite *test_formatationGestMtrx(void) {
-    Suite *s = suite_create("formatationGestMtrx");
-    TCase *tc = tcase_create(" test_gestMtrx ");
+Suite *test_formatationPlaneElem(void) {
+    Suite *s = suite_create("formatationPlaneElem");
+    TCase *tc = tcase_create(" test_planeElem ");
 
     suite_add_tcase(s, tc);
-    tcase_add_test(tc, test_formatationGestMtrx);
+    tcase_add_test(tc, test_planeElem_formatation);
 
     suite_add_tcase(s, tc);
     return s;

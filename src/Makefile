@@ -7,9 +7,11 @@ OS=$(shell uname -s)
 LIBOMP_PATH := /usr/lib/libomp
 GLFW_PATH := /usr/lib/libglfw
 GLEW_PATH := /usr/lib/libglew
+CHECK_PATH := /usr/lib/check
 
 CFLAGS=-Wall -Werror -Wextra -std=c99 \
-	-I$(LIBOMP_PATH)/include
+	-I$(LIBOMP_PATH)/include \
+	-I$(CHECK_PATH)/include
 
 ifeq ($(OS), Darwin)
 	OPENMP_FLAG=-Xpreprocessor -fopenmp
@@ -26,6 +28,7 @@ LDFLAGS = -L$(LIBOMP_PATH)/lib -lomp \
 	-framework OpenGL \
 	-framework GLUT \
 	-L$(GLEW_PATH)/lib -lglew \
+	-L$(CHECK_PATH)/lib -lcheck \
 	$(OPENMP_FLAG)
 
 FILES=$(wildcard *.c)
@@ -55,9 +58,14 @@ ifeq ($(OS), Darwin)
 		echo "Installing glew..."; \
 		brew install glew; \
 	fi
+	@if ! brew list check; then \
+		echo "Installing check..."; \
+		brew install check; \
+	fi
 	$(eval LIBOMP_PATH := $(shell brew --prefix libomp))
 	$(eval GLFW_PATH := $(shell brew --prefix glfw))
 	$(eval GLEW_PATH := $(shell brew --prefix glew))
+	$(shell CHECK_PATH := $(shell brew --prefix check))
 else
 	@echo "Checking dependencies for Linux..."
 	@if ! dpkg -l | grep -q libomp-dev; then \
@@ -72,9 +80,13 @@ else
 		echo "Installing libglew-dev..."; \
 		sudo apt update && sudo apt install -y libglew-dev; \
 	fi
+	@if ! dpkg -l | grep -q check; then \
+		echo "Installing check..."; \
+		sudo apt update && sudo apt install -y check; \
+	fi
 endif
 
-$(MY_LIB): $(FILES)
+$(MY_LIB): $(FILES) check_deps
 	$(CC) -c $(CFLAGS) $(FILES)
 	ar rc $@ $(OBJ)
 	ranlib $@
