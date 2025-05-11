@@ -148,6 +148,9 @@ clean_obj:
 clean_lib:
 	rm -rf *.a
 
+clean_fem:
+	rm -rf fem
+
 clean_test:
 	rm -rf *.gcda
 	rm -rf *.gcno
@@ -156,7 +159,7 @@ clean_test:
 	rm -rf report
 	rm -rf valgrind.txt
 
-clean: clean_lib clean_obj clean_test
+clean: clean_lib clean_obj clean_test clean_fem
 	rm -rf unot_test
 	rm -rf RESULT_VALGRIND.txt
 

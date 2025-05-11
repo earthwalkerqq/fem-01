@@ -1,8 +1,9 @@
+#include "formation_mtrx.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "fem.h"
-#include "formation_mtrx.h"
 
 // расчет матрицы деформаций
 double **formationDeformMtrx(double **deformMtrx, coord coord1, coord coord2,
@@ -46,9 +47,8 @@ double **formationElastMtrx(double **elastMtrx, double e, double puas) {
 }
 
 // расчет матрицы напряжений
-void stressPlanElem(coord coord1, coord coord2, coord coord3,
-                    double e, double puas, double **deformMtrx,
-                    double **strsMatr) {
+void stressPlanElem(coord coord1, coord coord2, coord coord3, double e,
+                    double puas, double **deformMtrx, double **strsMatr) {
   // формирование матрицы упругости elastMtrx[3][3]
   double *dataElastMtrx = (double *)malloc(3 * 3 * sizeof(double));
   double **elastMtrx = NULL;
@@ -110,8 +110,8 @@ void planeElement(coord coord1, coord coord2, coord coord3, double e, double h,
 // функция сборки глобальной матрицы жесткости kglb[ndof][ndof]
 void assemblyGlobMatr(int ndofysla, nodeNumber node, double **gest,
                       double **kglb) {
-  int il, jl, ig, jg; // начальные позиции в лок. и глоб. матрицах
-  int iblok, jblok;   // добавочные коэф. к позициям матриц
+  int il, jl, ig, jg;  // начальные позиции в лок. и глоб. матрицах
+  int iblok, jblok;    // добавочные коэф. к позициям матриц
   int nys[3];
   nys[0] = node.iys1 - 1;
   nys[1] = node.iys2 - 1;
@@ -230,7 +230,7 @@ short readFromFile(char *filename, int *nys, double **dataCar, double ***car,
     err = 1;
   } else {
     fscanf(file, "%d", nys);
-    makeDoubleMtrx(dataCar, car, 3, *nys); // массив координат узлов элемента
+    makeDoubleMtrx(dataCar, car, 3, *nys);  // массив координат узлов элемента
   }
   if (*car == NULL) {
     err = 2;
@@ -239,7 +239,7 @@ short readFromFile(char *filename, int *nys, double **dataCar, double ***car,
     fscanf(file, "%lf%lf%lf", &(*car)[0][i], &(*car)[1][i], &(*car)[2][i]);
   }
   fscanf(file, "%d", nelem);
-  makeIntegerMtrx(data_jt03, jt03, 3, *nelem); // массив номеров узлов элемента
+  makeIntegerMtrx(data_jt03, jt03, 3, *nelem);  // массив номеров узлов элемента
   if (*jt03 == NULL) {
     err = 3;
   }

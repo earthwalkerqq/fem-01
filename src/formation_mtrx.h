@@ -10,9 +10,8 @@ void planeElement(coord coord1, coord coord2, coord coord3, double e, double h,
                   double puas, double **gest);
 void assemblyGlobMatr(int ndofysla, nodeNumber node, double **gest,
                       double **kglb);
-void stressPlanElem(coord coord1, coord coord2, coord coord3,
-                    double e, double puas, double **deformMtrx,
-                    double **strsMatr);
+void stressPlanElem(coord coord1, coord coord2, coord coord3, double e,
+                    double puas, double **deformMtrx, double **strsMatr);
 void FillConstrainedLoadedNodes(int **nodePres, int *lenNodePres,
                                 int **nodeZakrU, int *lenNodeZakrU,
                                 int **nodeZakrV, int *lenNodeZakrV,

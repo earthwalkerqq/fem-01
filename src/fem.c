@@ -1,10 +1,11 @@
+#include "fem.h"
+
 #include <math.h>
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "fem.h"
 #include "formation_mtrx.h"
 
 // расчет матрицы лок. жесткости и добавление ее в глоб. матрицу
@@ -84,7 +85,7 @@ bool matrLDLT(int ndof, double **kglb) {
 
 // прямая подстановка. Решение L*X=R
 void direktLDLT(int ndof, double **kglb, double *x,
-                double *r) { // r - массив нагрузок; x - рабочий массив
+                double *r) {  // r - массив нагрузок; x - рабочий массив
   // разложение симметричной матрицы kglb в LDLT
   double sum;
   x[0] = r[0];
@@ -152,9 +153,8 @@ bool solveLinearSystemLDLT(double **kglb, double *u, double *r, double *x,
 }
 
 // расчет напряжений и деформаций в элементах модели
-void stressModel(int ndofysla, int nelem, int **jt03, double **car,
-                 double e, double puas, double *u, double **strain,
-                 double **stress) {
+void stressModel(int ndofysla, int nelem, int **jt03, double **car, double e,
+                 double puas, double *u, double **strain, double **stress) {
   // формирование матрицы деформаций deformMtrx[3][6]
   double *dataDeformMtrx = (double *)malloc(3 * 6 * sizeof(double));
   double **deformMtrx = (double **)malloc(3 * sizeof(double *));

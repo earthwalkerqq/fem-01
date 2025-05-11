@@ -31,9 +31,8 @@ bool diagLDLT(int ndof, double **kglb, double *x);
 void rechLDLT(int ndof, double **kglb, double *u, double *x);
 bool solveLinearSystemLDLT(double **kglb, double *u, double *r, double *x,
                            int ndof);
-void stressModel(int ndofysla, int nelem, int **jt03, double **car,
-                 double e, double puas, double *u, double **strain,
-                 double **stress);
+void stressModel(int ndofysla, int nelem, int **jt03, double **car, double e,
+                 double puas, double *u, double **strain, double **stress);
 void AssembleLocalStiffnessToGlobal(double **gest, double **kglb, int **jt03,
                                     double **car, int nelem, double e, double h,
                                     double puas, int ndofysla);
