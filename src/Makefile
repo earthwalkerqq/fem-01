@@ -3,10 +3,10 @@ CC=clang
 OS=$(shell uname -s)
 
 # Default paths
-# LIBOMP_PATH=/usr/lib/libomp
-# GLFW_PATH=/usr/lib/libglfw
-# GLEW_PATH=/usr/lib/libglew
-# CHECK_PATH=/usr/lib/check
+# LIBOMP_PATH :=/usr/lib/libomp
+# GLFW_PATH := /usr/lib/libglfw
+# GLEW_PATH := /usr/lib/libglew
+# CHECK_PATH := /usr/lib/check
 
 ifeq ($(OS), Darwin)
     LIBOMP_PATH := $(shell brew --prefix libomp)
@@ -30,8 +30,8 @@ else
 	OPENMP_FLAG=-fopenmp
 endif
 
-MAC_FLAGS=-lcheck -lm
-LINUX_FLAGS=-lcheck -lm -lrt -lpthread -lsubunit
+MAC_FLAGS=-lm
+LINUX_FLAGS=-lm -lrt -lpthread -lsubunit
 GCOV_FLAGS=-fprofile-arcs -ftest-coverage
 
 FILES=$(wildcard *.c)
@@ -63,7 +63,7 @@ ifeq ($(OS), Darwin)
 	fi
 	@if ! brew list check; then \
 		echo "Installing check..."; \
-		brew install check; 
+		brew install check; \
 	fi
 	$(eval LIBOMP_PATH := $(shell brew --prefix libomp))
 	$(eval GLFW_PATH := $(shell brew --prefix glfw))
@@ -118,7 +118,7 @@ else
 endif
 	./test
 
-fem: $(MYLIB)
+fem: $(MY_LIB)
 ifeq ($(OS),Darwin)
 	$(CC) $(CFLAGS) $(FILES) $< -o fem $(MAC_FLAGS) $(FEM_FLAG)
 else
