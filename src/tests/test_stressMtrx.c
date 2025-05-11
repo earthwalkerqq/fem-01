@@ -1,6 +1,12 @@
 #include "test_fem.h"
 
 START_TEST(test_stressMtrx_formatation) {
+    coord coord1 = {0., 0.};
+    coord coord2 = {20., 0.};
+    coord coord3 = {20., 20.};
+    double e = 2.1e5;
+    double puas = 0.3;
+
     double *dataStrsMxtr = (double *)malloc(3 * 6 * sizeof(double));
     double **strsMxtr = NULL;
     makeDoubleMtrx(&dataStrsMxtr, &strsMxtr, 3, 6);

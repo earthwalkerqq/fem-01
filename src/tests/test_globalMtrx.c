@@ -1,6 +1,21 @@
 #include "test_fem.h"
 
 START_TEST(test_formatationGlobalMtrx_1) {
+    coord coord1 = {0., 0.};
+    coord coord2 = {20., 0.};
+    coord coord3 = {20., 20.};
+    int ndofysla = 2;
+    double e = 2.1e5;
+    double puas = 0.3;
+    double h = 1.;
+    int jt03[3][2] = {
+        {1, 1},
+        {2, 3},
+        {3, 4}
+    };
+    int nelem = 2;
+    int ndof = 8;
+
     double *dataGEST = (double *)malloc(6 * 6 * sizeof(double));
     double **gest = NULL;
     makeDoubleMtrx(&dataGEST, &gest, 6, 6);
@@ -35,6 +50,19 @@ START_TEST(test_formatationGlobalMtrx_1) {
 } END_TEST
 
 START_TEST(test_formatationGlobalMtrx_2) {
+    coord coord1 = {0., 0.};
+    coord coord2 = {20., 0.};
+    coord coord3 = {20., 20.};
+    int ndofysla = 2;
+    double e = 2.1e5;
+    double puas = 0.3;
+    double h = 1.;
+    int jt03[3][2] = {
+        {1, 1},
+        {2, 3},
+        {3, 4}
+    };
+
     double *dataGEST = (double *)malloc(6 * 6 * sizeof(double));
     double **gest = NULL;
     makeDoubleMtrx(&dataGEST, &gest, 6, 6);

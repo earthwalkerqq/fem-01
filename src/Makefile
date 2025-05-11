@@ -1,13 +1,24 @@
-# flags
 CC=clang
 
 OS=$(shell uname -s)
 
 # Default paths
-LIBOMP_PATH := /usr/lib/libomp
-GLFW_PATH := /usr/lib/libglfw
-GLEW_PATH := /usr/lib/libglew
-CHECK_PATH := /usr/lib/check
+# LIBOMP_PATH=/usr/lib/libomp
+# GLFW_PATH=/usr/lib/libglfw
+# GLEW_PATH=/usr/lib/libglew
+# CHECK_PATH=/usr/lib/check
+
+ifeq ($(OS), Darwin)
+    LIBOMP_PATH := $(shell brew --prefix libomp)
+    GLFW_PATH := $(shell brew --prefix glfw)
+    GLEW_PATH := $(shell brew --prefix glew)
+    CHECK_PATH := $(shell brew --prefix check)
+else
+    LIBOMP_PATH := /usr/lib/libomp
+    GLFW_PATH := /usr/lib/libglfw
+    GLEW_PATH := /usr/lib/libglew
+    CHECK_PATH := /usr/lib/check
+endif
 
 CFLAGS=-Wall -Werror -Wextra -std=c99 \
 	-I$(LIBOMP_PATH)/include \
@@ -23,14 +34,6 @@ MAC_FLAGS=-lcheck -lm
 LINUX_FLAGS=-lcheck -lm -lrt -lpthread -lsubunit
 GCOV_FLAGS=-fprofile-arcs -ftest-coverage
 
-LDFLAGS = -L$(LIBOMP_PATH)/lib -lomp \
-	-L$(GLFW_PATH)/lib -lglfw \
-	-framework OpenGL \
-	-framework GLUT \
-	-L$(GLEW_PATH)/lib -lglew \
-	-L$(CHECK_PATH)/lib -lcheck \
-	$(OPENMP_FLAG)
-
 FILES=$(wildcard *.c)
 OBJ=$(FILES:.c=.o)
 
@@ -40,7 +43,7 @@ MY_LIB=fem-01.a
 
 all: check_deps $(MY_LIB)
 
-.PHONY: all test memory_test $(MY_LIB) gcov_report clean rebuild check_deps
+.PHONY: all test memory_test $(MY_LIB) gcov_report clean rebuild check_deps fem
 
 check_deps:
 ifeq ($(OS), Darwin)
@@ -60,12 +63,12 @@ ifeq ($(OS), Darwin)
 	fi
 	@if ! brew list check; then \
 		echo "Installing check..."; \
-		brew install check; \
+		brew install check; 
 	fi
 	$(eval LIBOMP_PATH := $(shell brew --prefix libomp))
 	$(eval GLFW_PATH := $(shell brew --prefix glfw))
 	$(eval GLEW_PATH := $(shell brew --prefix glew))
-	$(shell CHECK_PATH := $(shell brew --prefix check))
+	$(eval CHECK_PATH := $(shell brew --prefix check))
 else
 	@echo "Checking dependencies for Linux..."
 	@if ! dpkg -l | grep -q libomp-dev; then \
@@ -86,6 +89,21 @@ else
 	fi
 endif
 
+OMP_FLAG = -L$(LIBOMP_PATH)/lib -lomp
+
+TEST_FLAG = $(OMP_FLAG) \
+		    -L$(CHECK_PATH)/lib -lcheck \
+	        $(OPENMP_FLAG)
+
+GLFLAGS = -L$(GLFW_PATH)/lib -lglfw \
+		  -framework OpenGL \
+		  -framework GLUT \
+		  -L$(GLEW_PATH)/lib -lglew
+
+FEM_FLAG = $(OMP_FLAG) \
+	       $(OPENMP_FLAG) \
+		   $(GLFLAGS)
+
 $(MY_LIB): $(FILES) check_deps
 	$(CC) -c $(CFLAGS) $(FILES)
 	ar rc $@ $(OBJ)
@@ -94,11 +112,19 @@ $(MY_LIB): $(FILES) check_deps
 
 test: $(MY_LIB)
 ifeq ($(OS), Darwin)
-	$(CC) $(CFLAGS) $(GCOV_FLAGS) $(TEST_FILES) $< -o test $(MAC_FLAGS) $(LDFLAGS)
+	$(CC) $(CFLAGS) $(GCOV_FLAGS) $(TEST_FILES) $< -o test $(MAC_FLAGS) $(TEST_FLAG)
 else
-	$(CC) $(CFLAGS) $(GCOV_FLAGS) $(TEST_FILES) $< -o test $(LINUX_FLAGS) $(LDFLAGS)
+	$(CC) $(CFLAGS) $(GCOV_FLAGS) $(TEST_FILES) $< -o test $(LINUX_FLAGS) $(TEST_FLAG)
 endif
 	./test
+
+fem: $(MYLIB)
+ifeq ($(OS),Darwin)
+	$(CC) $(CFLAGS) $(FILES) $< -o fem $(MAC_FLAGS) $(FEM_FLAG)
+else
+	$(CC) $(CFLAGS) $(FILES) $< -o fem $(LINUX_FLAGS) $(FEM_FLAG)
+endif
+	./fem
 
 gcov_report: clean
 ifeq ($(OS), Darwin)

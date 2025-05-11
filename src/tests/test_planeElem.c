@@ -1,6 +1,13 @@
 #include "test_fem.h"
 
 START_TEST(test_planeElem_formatation) {
+    coord coord1 = {0., 0.};
+    coord coord2 = {20., 0.};
+    coord coord3 = {20., 20.};
+    double e = 2.1e5;
+    double puas = 0.3;
+    double h = 1.;
+
     double *dataGEST = (double *)malloc(6 * 6 * sizeof(double));
     double **gest = NULL;
     makeDoubleMtrx(&dataGEST, &gest, 6, 6);

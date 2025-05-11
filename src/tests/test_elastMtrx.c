@@ -1,6 +1,8 @@
 #include "test_fem.h"
 
 START_TEST(test_elastMtrx_formation) {
+    double puas = 0.3;
+    double e = 2.1e5;
     double *dataElastMtrx = (double *)malloc(3 * 3 * sizeof(double));
     double **elastMtrx = (double **)malloc(3 * sizeof(double *));
     for (int i = 0; i < 3; i++) {
