@@ -69,18 +69,15 @@ int main(int argc, char **argv) {
     free_memory(5, gest, dataCar, car, data_jt03, jt03);
     exit(1);
   }
-  double *dataKGLB;
-  // глобальная матрица жесткости kglb
-  double **kglb = NULL;
-  makeDoubleMtrx(&dataKGLB, &kglb, ndof, ndof);
+  // глобальная матрица жесткости kglb[ndof][ndof]
+  double *dataKGLB = (double *)calloc(ndof * ndof, sizeof(double));
+  double **kglb = (double **)calloc(ndof, sizeof(double *));
+  for (int i = 0; i < ndof; i++) {
+    kglb[i] = dataKGLB + i * ndof;
+  }
   if (kglb == NULL) {
     free_memory(7, kglb, dataGEST, gest, dataCar, car, data_jt03, jt03);
     exit(1);
-  }
-  for (int i = 0; i < ndof; i++) {
-    for (int j = 0; j < ndof; j++) {
-      kglb[i][j] = 0.;
-    }
   }
   u = (double *)malloc(ndof * sizeof(double));  // массив перемещений узлов
   if (u == NULL) {
@@ -132,9 +129,7 @@ int main(int argc, char **argv) {
   }
   stressModel(ndofysla, nelem, jt03, car, e, puas, u, strain, stress);
   writeResult("result.txt", jt03, strain, stress, r, u, nelem, nys, ndof);
-
   drawMashForSolve(argc, argv);  // отрисовка модели, разбитой на КЭ
-
   // освобождение памяти из под матрицы
   free_memory(18, dataStress, stress, dataStrain, strain, nodePres, nodeZakrU,
               nodeZakrV, u, r, x, dataKGLB, kglb, dataGEST, gest, dataCar, car,
