@@ -13,18 +13,12 @@ START_TEST(test_deformMtrx_formatation) {
 
   double a2 = coord2.x * coord3.y - coord2.y * coord3.x + coord3.x * coord1.y -
               coord3.y * coord1.x + coord1.x * coord2.y - coord1.y * coord2.x;
+  double a = (a2 > 0.) ? 1 / (a2) : 1.;
   deformMxtr = formationDeformMtrx(deformMxtr, coord1, coord2, coord3, a2);
   double resMtrx[3][6] = {
-      {
-          a2 * (-20.),
-          0.,
-          a2 * 20.,
-          0.,
-          0.,
-          0.,
-      },
-      {0., 0., 0., a2 * (-20.), 0., a2 * 20.},
-      {0., a2 * (-20.), a2 * (-20.), a2 * 20., a2 * 20., 0.}};
+      {a * (-20.), 0., a * 20., 0., 0., 0.},
+      {0., 0., 0., a * (-20.), 0., a * 20.},
+      {0., a * (-20.), a * (-20.), a * 20., a * 20., 0.}};
   for (int row = 0; row < 3; row++) {
     for (int col = 0; col < 6; col++) {
       ck_assert_double_eq(deformMxtr[row][col], resMtrx[row][col]);

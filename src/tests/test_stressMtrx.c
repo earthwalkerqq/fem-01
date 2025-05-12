@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "test_fem.h"
 
 START_TEST(test_stressMtrx_formatation) {
@@ -16,6 +17,7 @@ START_TEST(test_stressMtrx_formatation) {
   double *dataElastMtrx = (double *)malloc(3 * 3 * sizeof(double));
   double **elastMtrx = NULL;
   makeDoubleMtrx(&dataElastMtrx, &elastMtrx, 3, 3);
+  formationElastMtrx(elastMtrx, e, puas);
   stressPlanElem(coord1, coord2, coord3, e, puas, deformMtrx, strsMxtr);
   double *dataResMtrx = (double *)malloc(3 * 6 * sizeof(double));
   double **resMtrx = NULL;

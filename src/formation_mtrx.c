@@ -9,7 +9,7 @@
 double **formationDeformMtrx(double **deformMtrx, coord coord1, coord coord2,
                              coord coord3, double a2) {
   double a;
-  a = (a2 > 0.0) ? 1 / (a2) : 1.0;
+  a = (a2 > 0.) ? 1 / (a2) : 1.;
   deformMtrx[0][0] = a * (coord2.y - coord3.y);
   deformMtrx[0][1] = 0;
   deformMtrx[0][2] = a * (coord3.y - coord1.y);
