@@ -1,10 +1,11 @@
 #include "test_fem.h"
 
 START_TEST(test_deformMtrx_formatation) {
+  // fixture
   coord coord1 = {0., 0.};
   coord coord2 = {20., 0.};
   coord coord3 = {20., 20.};
-
+  // calculate
   double *dataDeformMtrx = (double *)malloc(3 * 6 * sizeof(double));
   double **deformMxtr = (double **)malloc(3 * sizeof(double *));
   for (int i = 0; i < 3; i++) {

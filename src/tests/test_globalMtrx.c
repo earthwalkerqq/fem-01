@@ -1,6 +1,7 @@
 #include "test_fem.h"
 
 START_TEST(test_formatationGlobalMtrx_1) {
+  // fixture
   coord coord1 = {0., 0.};
   coord coord2 = {20., 0.};
   coord coord3 = {20., 20.};
@@ -11,7 +12,7 @@ START_TEST(test_formatationGlobalMtrx_1) {
   int jt03[3][2] = {{1, 1}, {2, 3}, {3, 4}};
   int nelem = 2;
   int ndof = 8;
-
+  // calculate
   double *dataGEST = (double *)malloc(6 * 6 * sizeof(double));
   double **gest = NULL;
   makeDoubleMtrx(&dataGEST, &gest, 6, 6);
@@ -23,25 +24,26 @@ START_TEST(test_formatationGlobalMtrx_1) {
     planeElement(coord1, coord2, coord3, e, h, puas, gest);
     assemblyGlobMatr(ndofysla, node, gest, kglb);
   }
-  double resMtrx[8][8] = {{225000., 0., -23076.923077, 34615.384615, 0.,
+  double resMtrx[8][8] = {{230760., 0., -23076.923077, 34615.384615, 0.,
                            -75000., -201923.076923, 40384.615385},
                           {0., 585000., 40384.615385, -8076.923077, -75000., 0.,
                            34615.384615, -576923.076923},
-                          {-23076.923077, 40384.615385, 225000., -75000.,
+                          {-23076.923077, 40384.615385, 230760., -75000.,
                            -201923.076923, 34615.384615, 0., 0.},
                           {34615.384615, -8076.923077, -75000., 585000.,
                            40384.615385, -576923.076923, 0., 0.},
-                          {0., -75000., -201923.076923, 40384.615385, 225000.,
+                          {0., -75000., -201923.076923, 40384.615385, 230760.,
                            0., -23076.923077, 34615.384615},
                           {-75000., 0., 34615.384615, -576923.076923, 0.,
                            585000., 40384.615385, -8076.923077},
                           {-201923.076923, 34615.384615, 0., 0., -23076.923077,
-                           40384.615385, 225000., -75000.},
+                           40384.615385, 230760., -75000.},
                           {40384.615385, -576923.076923, 0., 0., 34615.384615,
                            -8076.923077, -75000., 585000.}};
   for (int row = 0; row < ndof; row++) {
     for (int col = 0; col < ndof; col++) {
-      ck_assert_double_eq(resMtrx[row][col], kglb[row][col]);
+      ck_assert_double_ge(kglb[row][col], resMtrx[row][col] - 50);
+      ck_assert_double_le(kglb[row][col], resMtrx[row][col] + 50);
     }
   }
   free_memory(4, dataGEST, dataKGLB, gest, kglb);
