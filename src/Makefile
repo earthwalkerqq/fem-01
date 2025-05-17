@@ -41,7 +41,7 @@ TEST_FILES=$(wildcard tests/test_*.c)
 
 MY_LIB=fem-01.a
 
-all: check_deps $(MY_LIB)
+all: fem
 
 .PHONY: all test memory_test $(MY_LIB) gcov_report clean rebuild check_deps fem
 
