@@ -43,10 +43,7 @@ END_TEST
 Suite *test_formatationPlaneElem(void) {
   Suite *s = suite_create("formatationPlaneElem");
   TCase *tc = tcase_create(" test_planeElem ");
-
-  suite_add_tcase(s, tc);
   tcase_add_test(tc, test_planeElem_formatation);
-
   suite_add_tcase(s, tc);
   return s;
 }

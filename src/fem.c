@@ -12,7 +12,7 @@
 void AssembleLocalStiffnessToGlobal(double **gest, double **kglb, int **jt03,
                                     double **car, int nelem, double e, double h,
                                     double puas, int ndofysla) {
-#pragma omp parallel shared(nelem, jt03, car)
+#pragma omp parallel shared(nelem, jt03, car) private(gest, kglb)
   {
 #pragma omp for
     for (int ielem = 0; ielem < nelem; ielem++) {
@@ -21,7 +21,6 @@ void AssembleLocalStiffnessToGlobal(double **gest, double **kglb, int **jt03,
           jt03[1][ielem],
           jt03[2][ielem],
       };
-
       coord coord1 = {car[0][node.iys1 - 1], car[1][node.iys1 - 1]};
       coord coord2 = {car[0][node.iys2 - 1], car[1][node.iys2 - 1]};
       coord coord3 = {car[0][node.iys3 - 1], car[1][node.iys3 - 1]};
@@ -38,7 +37,7 @@ bool matrLDLT(int ndof, double **kglb) {
   bool ierr = false;
   double sum = kglb[i][i];
   if (fabs(sum) < 1.0e-20) {
-    printf("Разложение невозможно. Нулевой диигольный элемент");
+    printf("Разложение невозможно. Нулевой диагольный элемент");
     return true;
   }
 #pragma omp parallel shared(kglb, sum, ndof)
@@ -128,13 +127,13 @@ void rechLDLT(int ndof, double **kglb, double *u, double *x) {
   u[ndof - 1] = x[ndof - 1];
   for (int i = ndof - 2; i >= 0; i--) {
     sum = 0.0;
-#pragma omp parallel shared(kglb, ndof, i) reduction(+ : sum)
+#pragma omp parallel shared(kglb, ndof, i) private(sum)
     {
 #pragma omp for
       for (int j = i + 1; j < ndof; j++) {
         sum += kglb[j][i] * u[j];
       }
-    }
+    } 
     u[i] = x[i] - sum;
   }
 }

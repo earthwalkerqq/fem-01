@@ -31,10 +31,7 @@ END_TEST
 Suite *test_formatationDeformMtrx(void) {
   Suite *s = suite_create("formatationDeformMtrx");
   TCase *tc = tcase_create(" test_deformMtrx ");
-
-  suite_add_tcase(s, tc);
   tcase_add_test(tc, test_deformMtrx_formatation);
-
   suite_add_tcase(s, tc);
   return s;
 }

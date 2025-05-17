@@ -27,10 +27,7 @@ END_TEST
 Suite *test_formatationElastMtrx(void) {
   Suite *s = suite_create("formatationElastMtrx");
   TCase *tc = tcase_create(" test_elastMtrx ");
-
-  suite_add_tcase(s, tc);
   tcase_add_test(tc, test_elastMtrx_formation);
-
   suite_add_tcase(s, tc);
   return s;
 }

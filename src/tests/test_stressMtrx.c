@@ -47,10 +47,7 @@ END_TEST
 Suite *test_formatationStressMtrx(void) {
   Suite *s = suite_create("formatationStressMtrx");
   TCase *tc = tcase_create(" test_stressMtrx ");
-
-  suite_add_tcase(s, tc);
   tcase_add_test(tc, test_stressMtrx_formatation);
-
   suite_add_tcase(s, tc);
   return s;
 }

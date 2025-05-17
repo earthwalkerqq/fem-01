@@ -17,7 +17,7 @@ START_TEST(test_formatationGlobalMtrx_1) {
   double *dataGEST = (double *)malloc(6 * 6 * sizeof(double));
   double **gest = NULL;
   makeDoubleMtrx(&dataGEST, &gest, 6, 6);
-  double *dataKGLB = (double *)malloc(ndof * ndof * sizeof(double));
+  double *dataKGLB = (double *)calloc(ndof * ndof, sizeof(double));
   double **kglb = (double **)calloc(ndof, sizeof(double *));
   for (int i = 0; i < ndof; i++) {
     kglb[i] = dataKGLB + i * ndof;
@@ -69,7 +69,6 @@ START_TEST(test_formatationGlobalMtrx_2) {
   double puas = 0.3;
   double h = 1.;
   int jt03[3][2] = {{1, 1}, {2, 3}, {3, 4}};
-
   double *dataGEST = (double *)malloc(6 * 6 * sizeof(double));
   double **gest = NULL;
   makeDoubleMtrx(&dataGEST, &gest, 6, 6);
@@ -91,11 +90,8 @@ END_TEST
 Suite *test_formatationGlobalMtrx(void) {
   Suite *s = suite_create("formatationGlobalMtrx");
   TCase *tc = tcase_create(" test_globalMtrx ");
-
-  suite_add_tcase(s, tc);
   tcase_add_test(tc, test_formatationGlobalMtrx_1);
   tcase_add_test(tc, test_formatationGlobalMtrx_2);
-
   suite_add_tcase(s, tc);
   return s;
 }

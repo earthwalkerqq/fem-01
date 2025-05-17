@@ -7,7 +7,7 @@ int main(void) {
   Suite *fem_test[] = {
       test_formatationDeformMtrx(), test_formatationElastMtrx(),
       test_formatationStressMtrx(), test_formatationPlaneElem(),
-      test_formatationGlobalMtrx()};
+      test_formatationGlobalMtrx(), test_assemblGlobalMtrx()};
   for (int i = 0; fem_test[i] != NULL; i++) {
     SRunner *sr = srunner_create(fem_test[i]);
     srunner_run_all(sr, CK_NORMAL);

@@ -90,6 +90,16 @@ int main(int argc, char **argv) {
   // расчет матрицы лок. жесткости и добавление ее в глоб. матрицу
   AssembleLocalStiffnessToGlobal(gest, kglb, jt03, car, nelem, e, h, puas,
                                  ndofysla);
+
+  // FILE *test_kglb_file = fopen("test_kglb.txt", "w");
+  // for (int row = 0; row < ndof; row++) {
+  //   for (int col = 0; col < ndof; col++) {
+  //     fprintf(test_kglb_file, "%lf ", kglb[row][col]);
+  //   }
+  //   putchar('\0');
+  // }
+  // fclose(test_kglb_file);
+
   int lenNodePres = 0, lenNodeZakrU = 0, lenNodeZakrV = 0;
   int *nodePres = NULL;   // массив нагруженных узлов
   int *nodeZakrU = NULL;  // массив закрепленных узлов по X
