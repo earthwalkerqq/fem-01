@@ -133,7 +133,7 @@ void rechLDLT(int ndof, double **kglb, double *u, double *x) {
       for (int j = i + 1; j < ndof; j++) {
         sum += kglb[j][i] * u[j];
       }
-    } 
+    }
     u[i] = x[i] - sum;
   }
 }
