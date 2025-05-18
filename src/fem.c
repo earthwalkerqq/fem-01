@@ -9,11 +9,15 @@
 #include "formation_mtrx.h"
 
 // расчет матрицы лок. жесткости и добавление ее в глоб. матрицу
-void AssembleLocalStiffnessToGlobal(double **gest, double **kglb, int **jt03,
+void AssembleLocalStiffnessToGlobal(double **kglb, int **jt03,
                                     double **car, int nelem, double e, double h,
                                     double puas, int ndofysla) {
-#pragma omp parallel shared(nelem, jt03, car) private(gest, kglb)
+#pragma omp parallel shared(nelem, jt03, car, kglb)
   {
+    // локальная матрица жесткости gest[6][6]
+    double *dataGEST = NULL;
+    double **gest = NULL;
+    makeDoubleMtrx(&dataGEST, &gest, 6, 6);
 #pragma omp for
     for (int ielem = 0; ielem < nelem; ielem++) {
       nodeNumber node = {
@@ -24,9 +28,19 @@ void AssembleLocalStiffnessToGlobal(double **gest, double **kglb, int **jt03,
       coord coord1 = {car[0][node.iys1 - 1], car[1][node.iys1 - 1]};
       coord coord2 = {car[0][node.iys2 - 1], car[1][node.iys2 - 1]};
       coord coord3 = {car[0][node.iys3 - 1], car[1][node.iys3 - 1]};
+      
+      // Используем локальную матрицу жесткости
       planeElement(coord1, coord2, coord3, e, h, puas, gest);
-      assemblyGlobMatr(ndofysla, node, gest, kglb);
+      
+      // Синхронизируем доступ к глобальной матрице
+#pragma omp critical
+      {
+        assemblyGlobMatr(ndofysla, node, gest, kglb);
+      }
     }
+
+    // Освобождаем память
+    free_memory(2, dataGEST, gest);
   }
 }
 

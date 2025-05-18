@@ -61,14 +61,6 @@ int main(int argc, char **argv) {
   double h = 1.0;
   double e = 2.1e5;
   double puas = 0.3;
-  double *dataGEST;
-  // локальная матрица жесткости gest[6][6]
-  double **gest = NULL;
-  makeDoubleMtrx(&dataGEST, &gest, 6, 6);
-  if (gest == NULL) {
-    free_memory(5, gest, dataCar, car, data_jt03, jt03);
-    exit(1);
-  }
   // глобальная матрица жесткости kglb[ndof][ndof]
   double *dataKGLB = (double *)calloc(ndof * ndof, sizeof(double));
   double **kglb = (double **)calloc(ndof, sizeof(double *));
@@ -76,30 +68,20 @@ int main(int argc, char **argv) {
     kglb[i] = dataKGLB + i * ndof;
   }
   if (kglb == NULL) {
-    free_memory(7, kglb, dataGEST, gest, dataCar, car, data_jt03, jt03);
+    free_memory(5, kglb, dataCar, car, data_jt03, jt03);
     exit(1);
   }
   u = (double *)malloc(ndof * sizeof(double));  // массив перемещений узлов
   if (u == NULL) {
-    free_memory(8, kglb, dataGEST, gest, dataCar, car, data_jt03, jt03, u);
+    free_memory(6, kglb, dataCar, car, data_jt03, jt03, u);
     exit(1);
   }
   double *r = (double *)malloc(ndof * sizeof(double));  // массив нагрузок
   // массив x (рабочий LDLT)
   double *x = (double *)malloc(ndof * sizeof(double));
   // расчет матрицы лок. жесткости и добавление ее в глоб. матрицу
-  AssembleLocalStiffnessToGlobal(gest, kglb, jt03, car, nelem, e, h, puas,
+  AssembleLocalStiffnessToGlobal(kglb, jt03, car, nelem, e, h, puas,
                                  ndofysla);
-
-  // FILE *test_kglb_file = fopen("test_kglb.txt", "w");
-  // for (int row = 0; row < ndof; row++) {
-  //   for (int col = 0; col < ndof; col++) {
-  //     fprintf(test_kglb_file, "%lf ", kglb[row][col]);
-  //   }
-  //   putchar('\0');
-  // }
-  // fclose(test_kglb_file);
-
   int lenNodePres = 0, lenNodeZakrU = 0, lenNodeZakrV = 0;
   int *nodePres = NULL;   // массив нагруженных узлов
   int *nodeZakrU = NULL;  // массив закрепленных узлов по X
@@ -116,8 +98,8 @@ int main(int argc, char **argv) {
   // решение СЛАУ методом разложения в LDLT
   bool ierr = solveLinearSystemLDLT(kglb, u, r, x, ndof);
   if (ierr) {  // ошибка разложения в LDLT или диаагонального решения
-    free_memory(14, nodePres, nodeZakrU, nodeZakrV, u, r, x, dataKGLB, kglb,
-                dataGEST, gest, dataCar, car, data_jt03, jt03);
+    free_memory(12, nodePres, nodeZakrU, nodeZakrV, u, r, x, dataKGLB, kglb,
+                dataCar, car, data_jt03, jt03);
     exit(1);
   }
   // расчет деформаций, напряжений
@@ -125,15 +107,15 @@ int main(int argc, char **argv) {
   double **strain = NULL;
   makeDoubleMtrx(&dataStrain, &strain, 4, nelem);
   if (strain == NULL) {
-    free_memory(15, strain, nodePres, nodeZakrU, nodeZakrV, u, r, x, dataKGLB,
-                kglb, dataGEST, gest, dataCar, car, data_jt03, jt03);
+    free_memory(13, strain, nodePres, nodeZakrU, nodeZakrV, u, r, x, dataKGLB,
+                kglb, dataCar, car, data_jt03, jt03);
     exit(1);
   }
   double *dataStress = NULL;  // массив напряжений
   makeDoubleMtrx(&dataStress, &stress, 4, nelem);
   if (stress == NULL) {
-    free_memory(17, stress, dataStrain, strain, nodePres, nodeZakrU, nodeZakrV,
-                u, r, x, dataKGLB, kglb, dataGEST, gest, dataCar, car,
+    free_memory(15, stress, dataStrain, strain, nodePres, nodeZakrU, nodeZakrV,
+                u, r, x, dataKGLB, kglb, dataCar, car,
                 data_jt03, jt03);
     exit(1);
   }
@@ -141,8 +123,8 @@ int main(int argc, char **argv) {
   writeResult("result.txt", jt03, strain, stress, r, u, nelem, nys, ndof);
   drawMashForSolve(argc, argv);  // отрисовка модели, разбитой на КЭ
   // освобождение памяти из под матрицы
-  free_memory(18, dataStress, stress, dataStrain, strain, nodePres, nodeZakrU,
-              nodeZakrV, u, r, x, dataKGLB, kglb, dataGEST, gest, dataCar, car,
+  free_memory(16, dataStress, stress, dataStrain, strain, nodePres, nodeZakrU,
+              nodeZakrV, u, r, x, dataKGLB, kglb, dataCar, car,
               data_jt03, jt03);
 }
 
