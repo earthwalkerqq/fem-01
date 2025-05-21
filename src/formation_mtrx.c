@@ -56,11 +56,11 @@ void stressPlanElem(coord coord1, coord coord2, coord coord3, double e,
   // заполнение матрицы упругости
   elastMtrx = formationElastMtrx(elastMtrx, e, puas);
   // заполнение матрицы деформаций deformMtrx[3][6]
-  double a2 = coord2.x * coord3.y - coord3.x * coord2.y + coord3.x * coord1.y -
-              coord1.x * coord3.y + coord1.x * coord2.y - coord2.x * coord1.y;
+  double a2 = coord2.x * coord3.y - coord3.x * coord2.y - coord1.x * coord3.y +
+              coord1.y * coord3.x + coord1.x * coord2.y - coord1.y * coord2.x;
   deformMtrx = formationDeformMtrx(deformMtrx, coord1, coord2, coord3, a2);
   // заполнение матрицы напряжений
-  // strsMatr[3][6] = elastMtrx[3][3] * deformMtrx[3][6]
+  // strsMatr[3][6]=elastMtrx[3][3]*deformMtrx[3][6]
   double sum;
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 6; j++) {
@@ -80,31 +80,31 @@ void planeElement(coord coord1, coord coord2, coord coord3, double e, double h,
   double sum;
   // формирование матрица деформаций deformMtrx[3][6]
   double *dataDefMtrx = (double *)malloc(3 * 6 * sizeof(double));
-  double **defotmMtrx = NULL;
-  makeDoubleMtrx(&dataDefMtrx, &defotmMtrx, 3, 6);
+  double **deformMtrx = NULL;
+  makeDoubleMtrx(&dataDefMtrx, &deformMtrx, 3, 6);
   // заполнение матрицы деформаций
-  double a2 = coord2.x * coord3.y - coord3.x * coord2.y + coord3.x * coord1.y -
-              coord1.x * coord3.y + coord1.x * coord2.y - coord2.x * coord1.y;
+  double a2 = coord2.x * coord3.y - coord3.x * coord2.y - coord1.x * coord3.y +
+              coord1.y * coord3.x + coord1.x * coord2.y - coord1.y * coord2.x;
   // формирование матрицы напряжений strsMatr[3][6]
   double *dataStrsMatr = (double *)malloc(3 * 6 * sizeof(double));
   double **strsMatr = NULL;
   makeDoubleMtrx(&dataStrsMatr, &strsMatr, 3, 6);
   // заполнение матрицы напряжений
-  stressPlanElem(coord1, coord2, coord3, e, puas, defotmMtrx, strsMatr);
+  stressPlanElem(coord1, coord2, coord3, e, puas, deformMtrx, strsMatr);
   double vol = h * a2 * 0.5;
-  // вычисление матрицы жесткости
-  // gest[6][6]=strsMatr(trans)[6][3]*deformMtrx[3][6]*vol
+  // вычисление локальной матрицы жесткости
+  // gest[6][6]=deformMtrx(trans)[6][3]*strsMatr[3][6];
   for (int i = 0; i < 6; i++) {
     for (int j = 0; j < 6; j++) {
-      sum = 0.0;
+      sum = 0.;
       for (int k = 0; k < 3; k++) {
-        sum += strsMatr[k][i] * defotmMtrx[k][j];
+        sum += deformMtrx[k][i] * strsMatr[k][j];
       }
-      gest[i][j] = vol * sum;
+      gest[i][j] = sum * vol;
     }
   }
   // освобождаем память
-  free_memory(4, dataDefMtrx, dataStrsMatr, defotmMtrx, strsMatr);
+  free_memory(4, dataDefMtrx, dataStrsMatr, deformMtrx, strsMatr);
 }
 
 // функция сборки глобальной матрицы жесткости kglb[ndof][ndof]

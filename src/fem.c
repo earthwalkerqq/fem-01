@@ -9,39 +9,26 @@
 #include "formation_mtrx.h"
 
 // расчет матрицы лок. жесткости и добавление ее в глоб. матрицу
-void AssembleLocalStiffnessToGlobal(double **kglb, int **jt03,
-                                    double **car, int nelem, double e, double h,
-                                    double puas, int ndofysla) {
-#pragma omp parallel shared(nelem, jt03, car, kglb)
-  {
-    // локальная матрица жесткости gest[6][6]
-    double *dataGEST = NULL;
-    double **gest = NULL;
-    makeDoubleMtrx(&dataGEST, &gest, 6, 6);
-#pragma omp for
-    for (int ielem = 0; ielem < nelem; ielem++) {
-      nodeNumber node = {
-          jt03[0][ielem],
-          jt03[1][ielem],
-          jt03[2][ielem],
-      };
-      coord coord1 = {car[0][node.iys1 - 1], car[1][node.iys1 - 1]};
-      coord coord2 = {car[0][node.iys2 - 1], car[1][node.iys2 - 1]};
-      coord coord3 = {car[0][node.iys3 - 1], car[1][node.iys3 - 1]};
-      
-      // Используем локальную матрицу жесткости
-      planeElement(coord1, coord2, coord3, e, h, puas, gest);
-      
-      // Синхронизируем доступ к глобальной матрице
-#pragma omp critical
-      {
-        assemblyGlobMatr(ndofysla, node, gest, kglb);
-      }
-    }
-
-    // Освобождаем память
-    free_memory(2, dataGEST, gest);
+void AssembleLocalStiffnessToGlobal(double **kglb, int **jt03, double **car,
+                                    int nelem, double e, double h, double puas,
+                                    int ndofysla) {
+  // локальная матрица жесткости gest[6][6]
+  double *dataGEST = NULL;
+  double **gest = NULL;
+  makeDoubleMtrx(&dataGEST, &gest, 6, 6);
+  for (int ielem = 0; ielem < nelem; ielem++) {
+    nodeNumber node = {
+        jt03[0][ielem],
+        jt03[1][ielem],
+        jt03[2][ielem],
+    };
+    coord coord1 = {car[0][node.iys1 - 1], car[1][node.iys1 - 1]};
+    coord coord2 = {car[0][node.iys2 - 1], car[1][node.iys2 - 1]};
+    coord coord3 = {car[0][node.iys3 - 1], car[1][node.iys3 - 1]};
+    planeElement(coord1, coord2, coord3, e, h, puas, gest);
+    assemblyGlobMatr(ndofysla, node, gest, kglb);
   }
+  free_memory(2, dataGEST, gest);
 }
 
 // разложение матрицы глобальной матрицы жесткости kglb[ndof][ndof] в LDLT
@@ -59,10 +46,10 @@ bool matrLDLT(int ndof, double **kglb) {
 #pragma omp for
     for (int j = 1; j < ndof; j++) {
       kglb[j][0] /= sum;
-      kglb[0][j] = 0.0;
+      kglb[0][j] = 0.;
     }
   }
-  for (i = 1; i < ndof - 1; i++) {
+  for (i = 1; i < ndof; i++) {
     diag = kglb[i][i];
     for (int j = 0; j < i; j++) {
       diag -= kglb[j][j] * (kglb[i][j] * kglb[i][j]);
@@ -83,16 +70,10 @@ bool matrLDLT(int ndof, double **kglb) {
           sum -= kglb[j][j] * (kglb[k][j] * kglb[i][j]);
         }
         kglb[k][i] = sum / diag;
-        kglb[i][k] = 0.0;
+        kglb[i][k] = 0.;
       }
     }
   }
-  i = ndof - 1;
-  diag = kglb[i][i];
-  for (int j = 0; j < i; j++) {
-    diag -= kglb[j][j] * (kglb[i][j] * kglb[i][j]);
-  }
-  kglb[i][i] = diag;
   return ierr;
 }
 
@@ -141,12 +122,8 @@ void rechLDLT(int ndof, double **kglb, double *u, double *x) {
   u[ndof - 1] = x[ndof - 1];
   for (int i = ndof - 2; i >= 0; i--) {
     sum = 0.0;
-#pragma omp parallel shared(kglb, ndof, i) private(sum)
-    {
-#pragma omp for
-      for (int j = i + 1; j < ndof; j++) {
-        sum += kglb[j][i] * u[j];
-      }
+    for (int j = i + 1; j < ndof; j++) {
+      sum += kglb[j][i] * u[j];
     }
     u[i] = x[i] - sum;
   }

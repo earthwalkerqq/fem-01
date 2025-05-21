@@ -80,8 +80,7 @@ int main(int argc, char **argv) {
   // массив x (рабочий LDLT)
   double *x = (double *)malloc(ndof * sizeof(double));
   // расчет матрицы лок. жесткости и добавление ее в глоб. матрицу
-  AssembleLocalStiffnessToGlobal(kglb, jt03, car, nelem, e, h, puas,
-                                 ndofysla);
+  AssembleLocalStiffnessToGlobal(kglb, jt03, car, nelem, e, h, puas, ndofysla);
   int lenNodePres = 0, lenNodeZakrU = 0, lenNodeZakrV = 0;
   int *nodePres = NULL;   // массив нагруженных узлов
   int *nodeZakrU = NULL;  // массив закрепленных узлов по X
@@ -115,8 +114,7 @@ int main(int argc, char **argv) {
   makeDoubleMtrx(&dataStress, &stress, 4, nelem);
   if (stress == NULL) {
     free_memory(15, stress, dataStrain, strain, nodePres, nodeZakrU, nodeZakrV,
-                u, r, x, dataKGLB, kglb, dataCar, car,
-                data_jt03, jt03);
+                u, r, x, dataKGLB, kglb, dataCar, car, data_jt03, jt03);
     exit(1);
   }
   stressModel(ndofysla, nelem, jt03, car, e, puas, u, strain, stress);
@@ -124,8 +122,8 @@ int main(int argc, char **argv) {
   drawMashForSolve(argc, argv);  // отрисовка модели, разбитой на КЭ
   // освобождение памяти из под матрицы
   free_memory(16, dataStress, stress, dataStrain, strain, nodePres, nodeZakrU,
-              nodeZakrV, u, r, x, dataKGLB, kglb, dataCar, car,
-              data_jt03, jt03);
+              nodeZakrV, u, r, x, dataKGLB, kglb, dataCar, car, data_jt03,
+              jt03);
 }
 
 void drawMashForSolve(int argc, char **argv) {
