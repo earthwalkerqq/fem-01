@@ -20,8 +20,8 @@ START_TEST(test_assembToBlobMtrx) {
     kglb[i] = dataKGLB + i * ndof;
   }
   // calculate
-  AssembleLocalStiffnessToGlobal(kglb, (int **)jt03, (double **)car,
-                                 nelem, e, h, puas, ndofysla);
+  AssembleLocalStiffnessToGlobal(kglb, (int **)jt03, (double **)car, nelem, e,
+                                 h, puas, ndofysla);
   double *dataResMtrx = (double *)calloc(ndof * ndof, sizeof(double));
   double **resMtrx = (double **)calloc(ndof, sizeof(double *));
   for (int i = 0; i < ndof; i++) {
